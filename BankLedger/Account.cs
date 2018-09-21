@@ -11,36 +11,83 @@ namespace BankLedger
     public struct Transaction
     {
         public DateTime time;
-        public Int64 amount;
+        public decimal amount;
     }
 
     public class Account
     {
-        /*
-            data members:
-	        balance
-	        transaction history
-	        password (hashed)
-        */
-        private Int64 balance;
+        //balance is represented as decimal type because it makes formatting intuitive,
+        //and the increased precision is appropriate for financial applications.
+
+        private decimal balance;
         private List<Transaction> history;
         //I'm assuming for sake of this exercise, since it's just a local console app,
         //that proper encryption is outside of the scope of the exercise.
+        //If I were going to properly encrypt, I'd use something like the method detailed at 
+        //http://csharptest.net/470/another-example-of-how-to-store-a-salted-password-hash/
+        //to keep a secure password store.
+        private string username;
         private string password;
 
+        public Account(string username, string password)
+        {
+            this.username = username;
+            this.password = password;
+            this.balance = 0.0m;
+        }
 
-        /*
-        functions:
-	        private:
-		        set balance [integer]
-		        add_to_history [string]
-	        public:
-		        get_balance[]
-		        get_history[]
-		        make_deposit(checks for value)[+int]
-			        -calls set_balance and then add_to_history
-		        make_withdrawal (checks for value)[+int]
-			        -calls set_balance and then add_to_history
-         */
+        //ChangeBalance will be used for both deposits and withdrawals;
+        //amounts will be validated in public MakeDeposit and MakeWithdrawal functions
+        private void ChangeBalance(decimal amount)
+        {
+            this.balance += amount;
+        }
+
+        private void Add_to_history(Transaction act)
+        {
+            this.history.Add(act);
+        }
+
+        public decimal GetBalance()
+        {
+            return this.balance;
+        }
+
+        public List<Transaction> GetHistory()
+        {
+            return this.history;
+        }
+
+        //MakeDeposit validates for only positive decimals
+        public void MakeDeposit(decimal amount)
+        {
+            if (amount <= 0.0m)
+            {
+                throw new System.ArgumentException("Deposit amount must be greater than $0.00");
+            }
+            else
+            {
+                this.ChangeBalance(amount);
+            }
+        }
+
+        //MakeWithdrawal validates for only positive decimals 
+        //and also prevents withdrawal from an overdrawn account;
+        //it will, however, let you overdraw.
+        public void MakeWithdrawal(decimal amount)
+        {
+            if (amount <= 0.0m)
+            {
+                throw new System.ArgumentException("Withdrawal amount must be greater than $0.00");
+            }
+            else if (this.balance < 0)
+            {
+                throw new System.InvalidOperationException("Can't withdraw from an account which is overdrawn!");
+            }
+            else
+            {
+                this.ChangeBalance(-1 * amount);
+            }
+        }
     }
 }
