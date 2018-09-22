@@ -79,11 +79,11 @@ namespace BankLedger
 
             Console.WriteLine("Enter the password for user \"" + username + "\".");
             string password = Console.ReadLine();
-            int attempts = 4;
+            int attempts = 3;
             while ((!Accounts[username].CheckPassword(password)) && (attempts>0))
             {
-                attempts--;
                 Console.WriteLine("Incorrect password entered for user \"" + username + "\";\n" + attempts + " attempts remaining.");
+                attempts--;
                 password = Console.ReadLine();
             }
             if (attempts<1)
