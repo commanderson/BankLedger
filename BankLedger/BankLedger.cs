@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 
 
@@ -13,7 +9,7 @@ namespace BankLedger
     {
         static Account CurrentLoadedAccount = null;
         static Dictionary<string, Account> Accounts = new Dictionary<string, Account>();
-        static string CurrencyFormat = "{0:$#,##0.00}";
+        static readonly string CurrencyFormat = "{0:$#,##0.00}";
 
         static void Main(string[] args)
         {
@@ -73,7 +69,7 @@ namespace BankLedger
         public static void LoginToAccount()
         {
             Console.WriteLine("Log in to existing account.");
-            Console.WriteLine("Input desired username.");
+            Console.WriteLine("Input account username.");
             string username = Console.ReadLine();
             if (!Accounts.ContainsKey(username))
             {
@@ -87,7 +83,7 @@ namespace BankLedger
             while ((!Accounts[username].CheckPassword(password)) && (attempts>0))
             {
                 attempts--;
-                Console.WriteLine("Incorrect password entered for user \"" + username + "\"; " + attempts + " attempts remaining.");
+                Console.WriteLine("Incorrect password entered for user \"" + username + "\";\n" + attempts + " attempts remaining.");
                 password = Console.ReadLine();
             }
             if (attempts<1)
@@ -141,7 +137,7 @@ namespace BankLedger
                         //and are not part of normal operations.
                         while((!decimal.TryParse(Console.ReadLine(), out deposit)) || (deposit <= 0.0m))
                         {
-                            Console.WriteLine("Please enter a valid, positive decimal monetary quantity without a currency symbol.");
+                            Console.WriteLine("Please enter a valid, positive decimal monetary quantity \n(without a currency symbol).");
                         }
                         Console.WriteLine("Confirm a deposit of " + string.Format(CurrencyFormat, deposit) + "?");
                         Console.WriteLine("Type y to confirm, anything else to cancel.");
@@ -155,7 +151,7 @@ namespace BankLedger
                     case 3://record withdrawal
                         if (CurrentLoadedAccount.GetBalance() <=0.0m)
                         {
-                            Console.WriteLine("The current account balance is at or below $0.00, "
+                            Console.WriteLine("The current account balance is at or below $0.00,\n"
                                 + "so you may not make any withdrawals at this time.");
                             break;
                         }
@@ -165,7 +161,7 @@ namespace BankLedger
                         //and are not part of normal operations.
                         while ((!decimal.TryParse(Console.ReadLine(), out withdrawal)) || (withdrawal <= 0.0m))
                         {
-                            Console.WriteLine("Please enter a valid, positive decimal monetary quantity without a currency symbol.");
+                            Console.WriteLine("Please enter a valid, positive decimal monetary quantity \n(without a currency symbol).");
                         }
                         Console.WriteLine("Confirm a withdrawal of " + string.Format(CurrencyFormat, withdrawal) + "?");
                         Console.WriteLine("Type y to confirm, anything else to cancel.");
