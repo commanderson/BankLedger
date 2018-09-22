@@ -5,13 +5,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
+
 namespace BankLedger
 {
     class Ledger
     {
         static Account CurrentLoadedAccount = null;
         static Dictionary<string, Account> Accounts = new Dictionary<string, Account>();
-        
+        static string CurrencyFormat = "{0:$#,##0.00}";
+
         static void Main(string[] args)
         {
             int choice = -1;
@@ -25,16 +28,16 @@ namespace BankLedger
                 int.TryParse(input, out choice);
                 switch (choice)
                 {
-                    case 1:
+                    case 1://create account
                         CreateAccount();
                         break;
-                    case 2:
+                    case 2://login to an account
                         LoginToAccount();
                         break;
-                    case 9:
+                    case 9://exit program
                         Console.WriteLine("Exiting...");
                         break;
-                    default:
+                    default://invalid option
                         Console.WriteLine("Invalid option selected.");
                         break;
                 }
@@ -114,6 +117,7 @@ namespace BankLedger
 
         public static void LoggedInInteractions()
         {
+            Console.Clear();
             int choice = -1;
             while (choice != 9)
             {
@@ -127,38 +131,76 @@ namespace BankLedger
                 int.TryParse(input, out choice);
                 switch (choice)
                 {
-                    case 1:
-                        Console.WriteLine("Current balance is $" + CurrentLoadedAccount.GetBalance());
+                    case 1://check balance
+                        Console.WriteLine("Current balance is " + string.Format(CurrencyFormat, CurrentLoadedAccount.GetBalance()));
                         break;
-                    case 2:
-                        
+                    case 2://record deposit
+                        Console.WriteLine("Enter the amount of the deposit (without dollar sign)");
+                        decimal deposit = -1;
+                        //we do validate entries here, so exceptions exist to tell us something went wrong
+                        //and are not part of normal operations.
+                        while((!decimal.TryParse(Console.ReadLine(), out deposit)) || (deposit <= 0.0m))
+                        {
+                            Console.WriteLine("Please enter a valid, positive decimal monetary quantity without a currency symbol.");
+                        }
+                        Console.WriteLine("Confirm a deposit of " + string.Format(CurrencyFormat, deposit) + "?");
+                        Console.WriteLine("Type y to confirm, anything else to cancel.");
+                        String confirmDeposit = Console.ReadLine();
+                        if (confirmDeposit == "y")
+                        {
+                            CurrentLoadedAccount.MakeDeposit(deposit);
+                            Console.WriteLine("Deposit of " + string.Format(CurrencyFormat, deposit) + " confirmed.");
+                        }
                         break;
-                    case 3:
+                    case 3://record withdrawal
+                        if (CurrentLoadedAccount.GetBalance() <=0.0m)
+                        {
+                            Console.WriteLine("The current account balance is at or below $0.00, "
+                                + "so you may not make any withdrawals at this time.");
+                            break;
+                        }
+                        Console.WriteLine("Enter the amount of the withdrawal (without dollar sign)");
+                        decimal withdrawal = -1;
+                        //we do validate entries here, so the exceptions exist to tell us something went wrong
+                        //and are not part of normal operations.
+                        while ((!decimal.TryParse(Console.ReadLine(), out withdrawal)) || (withdrawal <= 0.0m))
+                        {
+                            Console.WriteLine("Please enter a valid, positive decimal monetary quantity without a currency symbol.");
+                        }
+                        Console.WriteLine("Confirm a withdrawal of " + string.Format(CurrencyFormat, withdrawal) + "?");
+                        Console.WriteLine("Type y to confirm, anything else to cancel.");
+                        String confirmWithdrawal = Console.ReadLine();
+                        if (confirmWithdrawal == "y")
+                        {
+                            CurrentLoadedAccount.MakeWithdrawal(withdrawal);
+                            Console.WriteLine("Withdrawal of " + string.Format(CurrencyFormat, withdrawal) + " confirmed.");
+                        }
+                        break;
+                    case 4://view transaction history
+                        Console.WriteLine("Transaction history for " + CurrentLoadedAccount.GetUsername() + ":");
+                        Console.WriteLine("Timestamp\t\tAmount\tTransaction Type");
+                        List<Transaction> myHistory = CurrentLoadedAccount.GetHistory();
+                        for (var i = 0; i < myHistory.Count; i++)
+                        {
+                            Console.Write(myHistory[i].time + "\t" + myHistory[i].amount + "\t");
+                            //call it a deposit if it's positive and a withdrawal otherwise
+                            Console.WriteLine((myHistory[i].amount > 0.00m) ? "Desposit" : "Withdrawal");
+                        }
+                        if (myHistory.Count == 0)
+                        {
+                            Console.WriteLine("(No transactions to display)");
+                        }
 
                         break;
-                    case 4:
-
-                        break;
-                    case 9:
+                    case 9://logout
                         Console.WriteLine("Logging out \"" + CurrentLoadedAccount.GetUsername() + "\".");
                         Console.Clear();
                         break;
-                    default:
+                    default://invalid option
                         Console.WriteLine("Invalid option selected.");
                         break;
                 }
             }
-
-         /*       (w / Loaded account object:)
-	        check balance(get_balance)[]
-            record a deposit(add_balance)decmial,format]
-	        record a withdrawal(subtract_balance) [positive double,format]
-	        view transaction history[]
-            Logout(unload an account object) []*/
+        }
     }
-    }
-
-
-
-
 }
