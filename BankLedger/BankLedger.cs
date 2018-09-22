@@ -19,7 +19,7 @@ namespace BankLedger
                 Console.WriteLine("Welcome to Chrisbank!\n"
                 + "Enter 1 to create new account.\n"
                 + "Enter 2 to Log in to an account.\n"
-                + "Enter 9 to Exit");
+                + "Enter 9 to Exit.");
                 String input = Console.ReadLine();
                 int.TryParse(input, out choice);
                 switch (choice)
