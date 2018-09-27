@@ -81,4 +81,4 @@ If no transactions have occurred, there will be a notification to this effect.
 Selecting this option will return the user to the main menu
 
 #### Known Issues
-There is one undesirable behavior with current currency formatting - transaction history will display deposits and withdrawals of less than $0.05 as $0.00, but their aggregate could affect the account balance and leave a hypothetical user confused how their history lines up with their balance total. This could be fixed with further formatting tinkering or any number of custom types explicitly designed for currency, but I've decided to keep it as 
+There is one undesirable behavior with current currency formatting - transaction history will display deposits and withdrawals of less than $0.05 as $0.00, but their aggregate could affect the account balance and leave a hypothetical user confused how their history lines up with their balance total. This could be fixed with further formatting tinkering or any number of custom types explicitly designed for currency, but I've decided to keep it as is until such a time as a change is necessary.
